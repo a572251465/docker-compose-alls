@@ -1,14 +1,22 @@
 name: custom_nginx
 services:
   web:
+    container_name: nginx_server
     image: nginx:latest
     ports:
       - 80:80
       - 8888:8888
 #  服务自动重启
     restart: always
+    networks:
+      - uino_network
     volumes:
       - ./nginx/logs:/var/log/nginx
       - ./nginx/html:/usr/share/nginx/html
       - ./nginx/conf/nginx.conf:/etc/nginx/nginx.conf
       - ./nginx/conf/conf.d:/etc/nginx/conf.d
+networks:
+  uino_network:
+    driver: bridge
+#    表示 该网络的生命周期在容器之外维护，如果创建容器的时候，没有发现该网络的话，直接报错了。
+    external: true
