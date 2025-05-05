@@ -1,8 +1,8 @@
 #!/bin/bash
 
 network_name=uino_network
-gateway_value=172.20.0.1
-subnet_value=172.20.0.0/16
+gateway_value=10.100.0.1
+subnet_value=10.100.0.0/24
 
 
 if docker network ls --format '{{.Name}}' 2>/dev/null | grep -qx "$network_name";
