@@ -1,71 +1,71 @@
 services:
-  web_server:
-    env_file: .env
-    container_name: ${NGINX_SERVER_NAME}
-    image: nginx:latest
-    ports:
-      - 80:80
-    #  服务自动重启
-    restart: always
-    networks:
-      - uino_network
-    volumes:
-      - ${NGINX_LOGS_PATH}:/var/log/nginx
-      - ${NGINX_HTML_PATH}:/usr/share/nginx/html
-      - ${NGINX_CONF_PATH}:/etc/nginx/nginx.conf
-      - ${NGINX_CONFD_PATH}:/etc/nginx/conf.d
-  es_server:
-    env_file: .env
-    user: "1000:0"
-    container_name: ${ES_SERVER_NAME}
-    image: elasticsearch:7.17.28
-    restart: always
-    environment:
-      - discovery.type=single-node
-      - ES_JAVA_OPTS=-Xms1g -Xmx1g
-      - xpack.security.enabled=false
-      - network.host=0.0.0.0
-    ports:
-      - 9200:9200
-      - 9100:9100
-      - 9300:9300
-    networks:
-      - uino_network
-    volumes:
-      - ${ES_DATA_PATH}:/usr/share/elasticsearch/data
-      - ${ES_PLUGINS_PATH}:/usr/share/elasticsearch/plugins
-      - ${ES_SNAPSHOT_PATH}:/usr/share/elasticsearch/snapshots
-  minio_server:
-    env_file: .env
-    container_name: ${MINIO_SERVER_NAME}
-    image: minio/minio:latest
-    ports:
-      - 9000:9000
-      - 9001:9001
-    restart: always
-    networks:
-      - uino_network
-    volumes:
-      - ${MINIO_DATA_DIR}:/data
-    environment:
-      MINIO_ROOT_USER: admin
-      MINIO_ROOT_PASSWORD: admin123
-    command: server --console-address ":9001" /data
+#  web_server:
+#    env_file: .env
+#    container_name: ${NGINX_SERVER_NAME}
+#    image: nginx:latest
+#    ports:
+#      - 80:80
+#    #  服务自动重启
+#    restart: always
+#    networks:
+#      - uino_network
+#    volumes:
+#      - ${NGINX_LOGS_PATH}:/var/log/nginx
+#      - ${NGINX_HTML_PATH}:/usr/share/nginx/html
+#      - ${NGINX_CONF_PATH}:/etc/nginx/nginx.conf
+#      - ${NGINX_CONFD_PATH}:/etc/nginx/conf.d
+#  es_server:
+#    env_file: .env
+#    user: "1000:0"
+#    container_name: ${ES_SERVER_NAME}
+#    image: elasticsearch:7.17.28
+#    restart: always
+#    environment:
+#      - discovery.type=single-node
+#      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+#      - xpack.security.enabled=false
+#      - network.host=0.0.0.0
+#    ports:
+#      - 9200:9200
+#      - 9100:9100
+#      - 9300:9300
+#    networks:
+#      - uino_network
+#    volumes:
+#      - ${ES_DATA_PATH}:/usr/share/elasticsearch/data
+#      - ${ES_PLUGINS_PATH}:/usr/share/elasticsearch/plugins
+#      - ${ES_SNAPSHOT_PATH}:/usr/share/elasticsearch/snapshots
+#  minio_server:
+#    env_file: .env
+#    container_name: ${MINIO_SERVER_NAME}
+#    image: minio/minio:latest
+#    ports:
+#      - 9000:9000
+#      - 9001:9001
+#    restart: always
+#    networks:
+#      - uino_network
+#    volumes:
+#      - ${MINIO_DATA_DIR}:/data
+#    environment:
+#      MINIO_ROOT_USER: admin
+#      MINIO_ROOT_PASSWORD: admin123
+#    command: server --console-address ":9001" /data
   twins_server:
     build:
       context: ./twins-server
       dockerfile: twins.Dockerfile
     container_name: ${TWINS_SERVER_NAME}
+    ports:
+      - 9999:9999
     env_file: .env
     command: /bin/bash /opt/soft/restart-twins-server.sh
     restart: always
-    volumes:
-      - ${TWINS_SOFT_PATH}:/opt/soft
     networks:
       - uino_network
-    depends_on:
-      - es_server
-      - minio_server
+#    depends_on:
+#      - es_server
+#      - minio_server
 networks:
   uino_network:
     driver: bridge
